@@ -81,7 +81,18 @@ namespace nn_trees {
     using kdtree_3d_node_type = KDTreeNode<point_3d>;
     using kdtree_3d_node_ptr = kdtree_3d_node_type::node_pointer_type;
 
-    kdtree_3d_node_ptr build_tree(const points_3d &points, size_type leaf_size);
+
+    class KDTreeManager {
+    public:
+        KDTreeManager(points_3d *points, size_type leaf_size): points_(points), leaf_size_(leaf_size) {
+
+        }
+        kdtree_3d_node_ptr build_tree();
+    private:
+        indices_type indices_;
+        points_3d *points_;
+        size_type  leaf_size_;
+    };
 
     ResultManager
     knn_search_kdtree(const kdtree_3d_node_ptr &root,
