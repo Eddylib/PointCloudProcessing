@@ -32,7 +32,7 @@ namespace nn_trees {
 		) : axis_(axis),
 		    value_(value),
 		    left_(std::move(left)),
-		    right_(std::move(right)), start_(idx_start), end_(idx_end()) {
+		    right_(std::move(right)), start_(idx_start), end_(index_end) {
 			assert(axis_ < K);
 		}
 
@@ -87,16 +87,30 @@ namespace nn_trees {
 	class KDTreeManager {
 	public:
 		KDTreeManager(points_3d* points, size_type leaf_size) : points_(points), leaf_size_(leaf_size) {
-			root_ = build_tree();
+			root_ = build_tree_();
 		}
 
+		ResultManager perform_search(const point_3d& query, size_type k_nn);
+
 	private:
+		void knn_search_kdtree_recusive_(const kdtree_3d_node_ptr& root, const point_3d& query_point,
+		                                 ResultManager& result_manager);
 
-		void kdtree_recursive_build(kdtree_3d_node_ptr& root, size_type axis, index_type idx_start, index_type idx_end);
+		void kdtree_recursive_build_(kdtree_3d_node_ptr& root, size_type axis, index_type idx_start, index_type idx_end);
 
-		kdtree_3d_node_ptr build_tree();
+		kdtree_3d_node_ptr build_tree_();
 
-		scalar_type get_split_point(size_type axis, index_type idx_start, index_type idx_end)const;
+		scalar_type get_split_point_(size_type axis, index_type idx_start, index_type idx_end) const;
+
+		void split_node(
+		                index_type idx_start,
+		                index_type idx_end,
+		                index_type& less_start,
+		                index_type& less_end,
+		                index_type& greater_start,
+		                index_type& greater_end,
+		                size_type axis,
+		                scalar_type split_point);
 
 		indices_type indices_;
 		points_3d* points_;
