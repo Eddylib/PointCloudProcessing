@@ -6,12 +6,12 @@
 #include "KDTree.h"
 
 namespace nn_trees {
-	size_type get_split_dim(const kdtree_3d_node_ptr& node) {
+	size_type get_split_dim(const kdtree_node_ptr& node) {
 		// 划分维度为x->y->z循环
 		return (node->get_axis() + 1) % node->K;
 	}
 
-	void split_node(const points_3d& all_points,
+	void split_node(const points_type& all_points,
 	                indices_type& all_indices,
 	                index_type idx_start,
 	                index_type idx_end,
@@ -46,8 +46,8 @@ namespace nn_trees {
 
 
 	ResultManager
-	knn_search_kdtree(const kdtree_3d_node_ptr& root,
-	                  const points_3d& all_points, const point_3d& query_point,
+	knn_search_kdtree(const kdtree_node_ptr& root,
+	                  const points_type& all_points, const point_type& query_point,
 	                  int result_size) {
 		ResultManager result_manager(result_size);
 
@@ -55,7 +55,7 @@ namespace nn_trees {
 		return result_manager;
 	}
 
-	ResultManager knn_search_bf(const points_3d& all_points, const point_3d& query_point, int result_size) {
+	ResultManager knn_search_bf(const points_type& all_points, const point_type& query_point, int result_size) {
 		ResultManager  result_manager(result_size);
 		for (size_type i = 0; i < all_points.size(); ++i) {
 			auto distance = query_point.distance_with(all_points[i]);
@@ -64,8 +64,8 @@ namespace nn_trees {
 		return result_manager;
 	}
 
-	kdtree_3d_node_ptr KDTreeManager::build_tree_() {
-		kdtree_3d_node_ptr ret = nullptr;
+	kdtree_node_ptr KDTreeManager::build_tree_() {
+		kdtree_node_ptr ret = nullptr;
 		indices_.resize(points_->size());
 		for (size_type i = 0; i < points_->size(); ++i) {
 			indices_[i] = i;
@@ -74,11 +74,11 @@ namespace nn_trees {
 		return ret;
 	}
 
-	void KDTreeManager::kdtree_recursive_build_(kdtree_3d_node_ptr& root, size_type axis, index_type idx_start,
+	void KDTreeManager::kdtree_recursive_build_(kdtree_node_ptr& root, size_type axis, index_type idx_start,
 	                                            index_type idx_end) {
 		assert(root == nullptr);
 		if (root == nullptr) {
-			root = kdtree_3d_node_type::create_node(axis, 0.0, nullptr, nullptr, idx_start, idx_end);
+			root = kdtree_node_type::create_node(axis, 0.0, nullptr, nullptr, idx_start, idx_end);
 		}
 
 		// 先把indices给进来，再把indices分下去
@@ -116,14 +116,14 @@ namespace nn_trees {
 		return sum / (idx_end - idx_start);
 	}
 
-	ResultManager KDTreeManager::perform_search(point_3d const& query, size_type k_nn) {
+	ResultManager KDTreeManager::perform_search(point_type const& query, size_type k_nn) {
 		// 没有静态变量，result为当前栈内变量，可重入
 		ResultManager result_manager(k_nn);
 		knn_search_kdtree_recusive_(root_, query, result_manager);
 		return result_manager;
 	}
 
-	void KDTreeManager::knn_search_kdtree_recusive_(const kdtree_3d_node_ptr& root, const point_3d& query_point,
+	void KDTreeManager::knn_search_kdtree_recusive_(const kdtree_node_ptr& root, const point_type& query_point,
 	                                                ResultManager& result_manager) {
 		if (root->is_leaf()) {
 			// 对于所有点， 看是否符合条件加入结果集

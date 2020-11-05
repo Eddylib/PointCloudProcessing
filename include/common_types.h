@@ -52,8 +52,8 @@ namespace nn_trees {
 	};
 
 	using scalar_type = double;
-	using point_3d = Point<scalar_type, 3>;
-	using points_3d = Point<scalar_type, 3>::vectors_type;
+	using point_type = Point<scalar_type, 3>;
+	using points_type = Point<scalar_type, 3>::vectors_type;
 
 
     class ResultManager {

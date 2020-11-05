@@ -11,15 +11,13 @@
 
 namespace nn_trees {
 
-	template<class PointType>
+	template<int Dimension>
 	class KDTreeNode {
 	public:
 		using node_pointer_type = std::shared_ptr<KDTreeNode>;
 		using indices_type = std::vector<index_type>;
-		using point_type = PointType;
-		using point_ptr_type = std::shared_ptr<point_type>;
 
-		const static size_type K = PointType::size();
+		constexpr static size_type K = Dimension;
 
 		KDTreeNode() = default;
 
@@ -60,11 +58,11 @@ namespace nn_trees {
 			return value_;
 		}
 
-		[[nodiscard]] const node_pointer_type& left() const { return left_; }
+		const node_pointer_type& left() const { return left_; }
 
-		[[nodiscard]] const node_pointer_type& right() const { return right_; }
+		const node_pointer_type& right() const { return right_; }
 
-		[[nodiscard]] size_type get_axis() const { return axis_; }
+		size_type get_axis() const { return axis_; }
 
 		index_type idx_start() const { return start_; }
 
@@ -80,25 +78,25 @@ namespace nn_trees {
 		index_type        end_;
 	};
 
-	using kdtree_3d_node_type = KDTreeNode<point_3d>;
-	using kdtree_3d_node_ptr = kdtree_3d_node_type::node_pointer_type;
+	using kdtree_node_type = KDTreeNode<point_type::size()>;
+	using kdtree_node_ptr = kdtree_node_type::node_pointer_type;
 
 
 	class KDTreeManager {
 	public:
-		KDTreeManager(points_3d* points, size_type leaf_size) : points_(points), leaf_size_(leaf_size) {
+		KDTreeManager(points_type* points, size_type leaf_size) : points_(points), leaf_size_(leaf_size) {
 			root_ = build_tree_();
 		}
 
-		ResultManager perform_search(const point_3d& query, size_type k_nn);
+		ResultManager perform_search(const point_type& query, size_type k_nn);
 
 	private:
-		void knn_search_kdtree_recusive_(const kdtree_3d_node_ptr& root, const point_3d& query_point,
+		void knn_search_kdtree_recusive_(const kdtree_node_ptr& root, const point_type& query_point,
 		                                 ResultManager& result_manager);
 
-		void kdtree_recursive_build_(kdtree_3d_node_ptr& root, size_type axis, index_type idx_start, index_type idx_end);
+		void kdtree_recursive_build_(kdtree_node_ptr& root, size_type axis, index_type idx_start, index_type idx_end);
 
-		kdtree_3d_node_ptr build_tree_();
+		kdtree_node_ptr build_tree_();
 
 		scalar_type get_split_point_(size_type axis, index_type idx_start, index_type idx_end) const;
 
@@ -113,19 +111,18 @@ namespace nn_trees {
 		                scalar_type split_point);
 
 		indices_type indices_;
-		points_3d* points_;
-		size_type          leaf_size_;
-		kdtree_3d_node_ptr root_;
+		points_type* points_;
+		size_type       leaf_size_;
+		kdtree_node_ptr root_;
 	};
 
 	ResultManager
-	knn_search_kdtree(const kdtree_3d_node_ptr& root,
-	                  const points_3d& all_points, const point_3d& query_point,
+	knn_search_kdtree(const kdtree_node_ptr& root,
+	                  const points_type& all_points, const point_type& query_point,
 	                  int result_size);
 
-	ResultManager knn_search_bf(const points_3d& all_points, const point_3d& query_point, int result_size);
+	ResultManager knn_search_bf(const points_type& all_points, const point_type& query_point, int result_size);
 
-	void kdtree_traverse(kdtree_3d_node_ptr& root, indices_type& test_data);
 }
 
 
