@@ -7,6 +7,8 @@
 #include "common_types.h"
 namespace nn_trees{
 	points_type generate_points(size_type num);
+	points_type generate_points(const std::string &path);
+
 	void print_points(const points_type &points);
 }
 

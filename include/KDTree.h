@@ -88,11 +88,12 @@ namespace nn_trees {
 			root_ = build_tree_();
 		}
 
-		ResultManager perform_search(const point_type& query, size_type k_nn);
+		KNNResultManager perform_knn_search(const point_type& query, size_type k_nn);
+		RadisusResultManager perform_radius_search(const point_type& query, scalar_type radius);
 
 	private:
 		void knn_search_kdtree_recusive_(const kdtree_node_ptr& root, const point_type& query_point,
-		                                 ResultManager& result_manager);
+		                                 ResultManagerBase& result_manager);
 
 		void kdtree_recursive_build_(kdtree_node_ptr& root, size_type axis, index_type idx_start, index_type idx_end);
 
@@ -116,12 +117,13 @@ namespace nn_trees {
 		kdtree_node_ptr root_;
 	};
 
-	ResultManager
+	KNNResultManager
 	knn_search_kdtree(const kdtree_node_ptr& root,
 	                  const points_type& all_points, const point_type& query_point,
 	                  int result_size);
 
-	ResultManager knn_search_bf(const points_type& all_points, const point_type& query_point, int result_size);
+	KNNResultManager knn_search_knn_bf(const points_type& all_points, const point_type& query_point, int result_size);
+	RadisusResultManager knn_search_radius_bf(const points_type& all_points, const point_type& query_point, scalar_type radius);
 
 }
 
