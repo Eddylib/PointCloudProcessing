@@ -156,9 +156,9 @@ namespace nn_trees {
 			return true;
 
 		// 3、立方块的顶点与球相交，即点在球体内， 而边相交可以看做降维的点相交
-		scalar_type diffx = std::max(diff_abs[0] - root->oct_size(), 0.0);
-		scalar_type diffy = std::max(diff_abs[1] - root->oct_size(), 0.0);
-		scalar_type diffz = std::max(diff_abs[2] - root->oct_size(), 0.0);
+		scalar_type diffx = std::max(diff_abs[0] - root->oct_size(), static_cast<scalar_type>(0.0));
+		scalar_type diffy = std::max(diff_abs[1] - root->oct_size(), static_cast<scalar_type>(0.0));
+		scalar_type diffz = std::max(diff_abs[2] - root->oct_size(), static_cast<scalar_type>(0.0));
 		return (diffx * diffx + diffy * diffy + diffz * diffz) < (r * r);
 	}
 

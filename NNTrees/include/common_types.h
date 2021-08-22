@@ -62,11 +62,12 @@ namespace nn_trees {
 		}
 	};
 
-	using scalar_type = double;
+	using scalar_type = float;
 	using point_type = Point<scalar_type, 3>;
 	using points_type = Point<scalar_type, 3>::vectors_type;
 
-	using distance_id_map = std::multimap<scalar_type, index_type, std::greater<>>;
+	using distance_id_map = std::multimap<scalar_type, index_type, std::greater<scalar_type>>;
+
 	class ResultManagerBase {
 	public:
 
@@ -90,13 +91,13 @@ namespace nn_trees {
 		distance_id_map result_map_;
 	};
 
-	inline bool operator == (const distance_id_map& a, const distance_id_map &b){
-		if(a.size() != b.size()){
+	inline bool operator ==(const distance_id_map& a, const distance_id_map& b) {
+		if (a.size() != b.size()) {
 			return false;
 		}
-		auto aiter = a.begin(), biter = b.begin();
-		for (int i = 0; i < a.size(); ++i) {
-			if(std::abs(aiter->first- biter->first) > 0.000001){
+		auto     aiter = a.begin(), biter = b.begin();
+		for (int i     = 0; i < a.size(); ++i) {
+			if (std::abs(aiter->first - biter->first) > 0.000001) {
 				return false;
 			}
 			aiter++;
@@ -104,8 +105,9 @@ namespace nn_trees {
 		}
 		return true;
 	}
-	inline bool operator != (const distance_id_map& a, const distance_id_map &b){
-		return !(a==b);
+
+	inline bool operator !=(const distance_id_map& a, const distance_id_map& b) {
+		return !(a == b);
 	}
 
 	class RadisusResultManager : public ResultManagerBase {

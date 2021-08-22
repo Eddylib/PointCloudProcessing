@@ -10,7 +10,7 @@ int main() {
 	using namespace nn_trees;
 	// parameter equal with python code from lesson2code
 	const static size_type   LeafSize        = 32;
-	const static size_type   KNNK            = 8;
+	const static size_type   KNNK            = 1;
 	const static scalar_type min_oct_size    = 0.0001;
 	const static scalar_type build_test_time = 100;
 
@@ -38,7 +38,11 @@ int main() {
 
 	octree_search_knn.tic();
 	for (int i = 0; i < points.size(); ++i) {
-		octree_manager.perform_knn_search(points[i], KNNK);
+		auto result      = octree_manager.perform_knn_search(points[i], KNNK);
+		auto result_data = *(result.get_result().begin());
+		auto idx = result_data.second;
+		auto pt = points[idx];
+		assert(idx == i);
 	}
 	octree_search_knn.toc();
 
